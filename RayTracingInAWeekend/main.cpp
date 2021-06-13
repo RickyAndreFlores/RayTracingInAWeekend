@@ -7,10 +7,11 @@ int main()
 	const int image_width = 256;
 	const int image_height = 256;
 
+	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
 	for (int row = image_height - 1; row >= 0; --row)
 	{
-		for (int col = 0; col < image_width; --col)
+		for (int col = 0; col < image_width; ++col)
 		{
 
 			double percent_width = col / (double)(image_width - 1);
@@ -19,7 +20,7 @@ int main()
 
 			int r = static_cast<int>(255.999 * percent_width);
 			int g = static_cast<int>(255.999 * percent_height);
-			int g = static_cast<int>(255.999 * b_percent);
+			int b = static_cast<int>(255.999 * b_percent);
 
 			std::cout << r << ' ' << g << ' ' << b << '\n';
 
