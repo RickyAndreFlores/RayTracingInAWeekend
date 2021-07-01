@@ -65,26 +65,45 @@ public:
 class dielectric : public material {
 public:
     // dielectric means light both refracts through the material and reflects in some way
-
     dielectric(double index_of_refraction) : ir(index_of_refraction) {}
 
     virtual bool scatter( const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override 
     {
-
+        // when the ray is in the material with the higher refractive index, there is no real solution to Snell’s law
         attenuation = color(1.0, 1.0, 1.0);
-        // refraction ratio depends on whether it is entering material or exiting material, essentialy goes back to normal angle after leaving
+        // refraction ratio depends on whether it is entering material or exiting material, essentialy goes back to normal angle after 
         double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
 
         // unit vector or ray in direction
         vec3 unit_direction = unit_vector(r_in.direction());
-        // refract 
-        vec3 refracted = refract(unit_direction, rec.normal, refraction_ratio);
 
-        // make ray from hit point to refracted (goes through material at an new angle
-        scattered = ray(rec.p, refracted);
+        // using snells law we can find when the equation has no solution:  sin(theta) = refration_ratio * sin'(theta') when right hand side > 1 (max of sin is 1) 
+        double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0); // calculcate sign by using cosign ans dot product properties
+        double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+        bool cannot_refract = refraction_ratio * sin_theta > 1.0;
+
+        vec3 direction;
+        
+        // if cant reflect due to snells law, or schlicks approximation of reflectance
+        if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_double())
+            direction = reflect(unit_direction, rec.normal);
+        else
+            direction = refract(unit_direction, rec.normal, refraction_ratio);
+
+        // make ray from hit point to direction of either reflected or refracted ray
+        scattered = ray(rec.p, direction);
         return true;
     }
 
 public:
     double ir; // Index of Refraction
+
+
+private:
+    static double reflectance(double cosine, double ref_idx) {
+        // Use Schlick's approximation for reflectance.
+        auto r0 = (1 - ref_idx) / (1 + ref_idx);
+        r0 = r0 * r0;
+        return r0 + (1 - r0) * pow((1 - cosine), 5);
+    }
 };

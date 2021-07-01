@@ -55,13 +55,13 @@ int main()
 	hittable_list world;
 
 	shared_ptr<lambertian> material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-	shared_ptr<dielectric> material_center = make_shared<dielectric>(1.5);
+	shared_ptr<lambertian> material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
 	shared_ptr<dielectric> material_left   = make_shared<dielectric>(1.5);
 	shared_ptr<metal>	   material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 1);
 
 	world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground)); // bigger sphere just touching smaller ones
 	world.add(make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
-	world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
+	world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
 	world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
 
 	camera cam;
@@ -76,8 +76,8 @@ int main()
 			for (int s = 0; s < samples_per_pixel; ++s) 
 			{
 				// get coordinates in pixel space, for current_pixel + some random vector whose components are [0,1] 
-				double pixel_u = (col + random_double()) / (image_width - 1);
-				double pixel_v = (row + random_double()) / (image_height - 1);
+				double pixel_u = (col + random_double()) / (image_width - 1.0);
+				double pixel_v = (row + random_double()) / (image_height - 1.0);
 				// create a ray from camera origin, pointing to that pixel
 				ray r = cam.get_ray(pixel_u, pixel_v);
 				pixel_color += ray_color(r, world, max_depth); // for each sample add color
