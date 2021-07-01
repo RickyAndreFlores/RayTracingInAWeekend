@@ -40,12 +40,13 @@ public:
 
 class metal : public material {
 public:
-    metal(const color& a) : albedo(a) {}
+    metal(const color& a, double f) : albedo(a), fuzz(f < 1 ? f : 1) {}
 
     virtual bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override 
     {
         // get reflected ray direction
         vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
+        reflected = reflected + fuzz * random_in_unit_sphere();
         // refected rat starts at hitpoint
         scattered = ray(rec.p, reflected);
         // set albedo
@@ -56,4 +57,6 @@ public:
 
 public:
     color albedo;
+    double fuzz;
+
 };
