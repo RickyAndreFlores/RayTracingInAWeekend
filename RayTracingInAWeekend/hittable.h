@@ -2,9 +2,12 @@
 
 #include "rtweekend.h"
 
+class material; 
+
 struct hit_record {
     point3 p;      
     vec3 normal; // normal from hit point
+    shared_ptr<material> mat_ptr;
     double t; // ray = P(t) = origin + t * dir
 
     bool front_face;

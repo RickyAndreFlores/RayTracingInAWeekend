@@ -55,6 +55,12 @@ public:
         return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
     }
 
+    bool near_zero() const {
+        // Return true if the vector is close to zero in all dimensions.
+        // this is useful in avoiding float point error leading to a near zero value when it should just be zero
+        const auto s = 1e-8;
+        return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+    }
 };
 
 // Type aliases for vec3
@@ -127,4 +133,13 @@ vec3 random_unit_vector()
     // indirectly a brute force way to get a random unit vector
     return unit_vector(random_in_unit_sphere());
 
+}
+
+vec3 reflect(const vec3& incoming_ray_dir, const vec3& normal) 
+{
+    // due to the geometry of a virtual reflection, we can do some math to conclude 
+    // that reflected_ray_dir = incoming_ray_dir + 2b ; where ||b|| =  incoming_ray_dir.dot(normal)
+    // b = a vector pointng in the direction of the normal (a unit vector), with length ||b||, so to get that we do ||b|| * normal
+    // since incoming and normal are pointing to oppsite hemispheres, the dot will be negative, so make it positive by multipling by -1
+    return incoming_ray_dir + 2 * (dot(incoming_ray_dir, normal) * -1) * normal;
 }
