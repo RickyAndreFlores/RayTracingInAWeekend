@@ -60,3 +60,31 @@ public:
     double fuzz;
 
 };
+
+
+class dielectric : public material {
+public:
+    // dielectric means light both refracts through the material and reflects in some way
+
+    dielectric(double index_of_refraction) : ir(index_of_refraction) {}
+
+    virtual bool scatter( const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override 
+    {
+
+        attenuation = color(1.0, 1.0, 1.0);
+        // refraction ratio depends on whether it is entering material or exiting material, essentialy goes back to normal angle after leaving
+        double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
+
+        // unit vector or ray in direction
+        vec3 unit_direction = unit_vector(r_in.direction());
+        // refract 
+        vec3 refracted = refract(unit_direction, rec.normal, refraction_ratio);
+
+        // make ray from hit point to refracted (goes through material at an new angle
+        scattered = ray(rec.p, refracted);
+        return true;
+    }
+
+public:
+    double ir; // Index of Refraction
+};

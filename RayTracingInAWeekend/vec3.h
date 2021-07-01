@@ -143,3 +143,20 @@ vec3 reflect(const vec3& incoming_ray_dir, const vec3& normal)
     // since incoming and normal are pointing to oppsite hemispheres, the dot will be negative, so make it positive by multipling by -1
     return incoming_ray_dir + 2 * (dot(incoming_ray_dir, normal) * -1) * normal;
 }
+
+
+
+vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
+
+
+    // using snells law normal * sin(theta) = normal_prime * sin(theta_prime)
+    // etai_over_etat = n/n' = normal / normal_prime
+    // using some maths and snells equation we can come to these equations for the vectors that make up the refracted ray vector
+
+    auto cos_theta = fmin(dot(-uv, n), 1.0);
+    vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+
+    // vector addition of the perendical and parrallel componets (the x and y component vectors) result in final refracted ray vector 
+    return r_out_perp + r_out_parallel;
+}
