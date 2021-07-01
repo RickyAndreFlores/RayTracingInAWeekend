@@ -3,7 +3,11 @@
 #include <limits>
 #include <memory>
 
-#include <random>
+#include <random>   
+
+
+
+
 
 inline double clamp(double x, double min, double max) {
     if (x < min) return min;
@@ -11,7 +15,14 @@ inline double clamp(double x, double min, double max) {
     return x;
 }
 
+inline double random_double(double min, double max) {
+    // returns num between [min,max)
+    static std::uniform_real_distribution<double> distribution(min, max);
+    static std::mt19937 generator;
+    return distribution(generator);
+}
 inline double random_double() {
+    // returns num between [0,1)
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
     static std::mt19937 generator;
     return distribution(generator);

@@ -46,11 +46,21 @@ public:
         return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
     }
 
+
+    inline static vec3 random() {
+        return vec3(random_double(), random_double(), random_double());
+    }
+
+    inline static vec3 random(double min, double max) {
+        return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+    }
+
 };
 
 // Type aliases for vec3
 using point3 = vec3;   // 3D point
 using color = vec3;    // RGB color
+
 
 
 // vec3 Utility Functions
@@ -97,4 +107,24 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 
 inline vec3 unit_vector(vec3 v) {
     return v / v.length();
+}
+
+
+
+vec3 random_in_unit_sphere() {
+    // brute force find a random vector within a unit circle, i.e length < 1 
+    // this is just a tutorial, don't judge me
+    while (true) {
+        auto p = vec3::random(-1, 1);
+        if (p.length_squared() >= 1) continue;
+        return p;
+    }
+}
+
+
+vec3 random_unit_vector()
+{
+    // indirectly a brute force way to get a random unit vector
+    return unit_vector(random_in_unit_sphere());
+
 }
