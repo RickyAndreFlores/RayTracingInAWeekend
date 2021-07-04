@@ -15,7 +15,7 @@
 hittable_list random_scene() {
 	hittable_list world;
 
-	auto ground_material = make_shared<lambertian>(color(0.0, 0.2, 0.2));
+	auto ground_material = make_shared<lambertian>(color(0.0, 0.5, 0.5));
 	world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material));
 
 	for (int a = -11; a < 11; a++) {
@@ -28,13 +28,8 @@ hittable_list random_scene() {
 
 				if (choose_mat < 0.8) {
 
-					
 					// diffuse
 					auto albedo = color::random() * color::random();
-					if (b % 4 == 0)
-					{
-						albedo = color(0.0, .7, .7);
-					}
 
 					sphere_material = make_shared<lambertian>(albedo);
 					world.add(make_shared<sphere>(center, 0.2, sphere_material));
@@ -66,7 +61,6 @@ hittable_list random_scene() {
 
 	return world;
 }
-
 
 
 color ray_color(const ray& r, const hittable& world, int depth) {
@@ -102,10 +96,10 @@ int main()
 {
 	//Image
 	const double aspect_ratio = 3.0 / 2.0; //  == width / height 
-	const int image_width = 1200;
+	const int image_width = 300;
 	const int image_height = static_cast<int>(image_width / aspect_ratio); // == width * height / width 
-	const int samples_per_pixel = 500;
-	const int max_depth = 50;
+	const int samples_per_pixel = 10;
+	const int max_depth = 10;
 
 	// World
 	hittable_list world = random_scene();

@@ -30,8 +30,8 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
     double a = r.direction().length_squared();
     double half_b = dot(oc, r.direction());
     double c = oc.length_squared() - radius * radius;
-    double discriminant = half_b * half_b - a * c;
 
+    double discriminant = half_b * half_b - a * c;
     // if discriminant is negative there are no solution and no hit
     if (discriminant < 0)
     {
